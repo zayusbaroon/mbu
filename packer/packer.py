@@ -1,3 +1,18 @@
+ # Copyright © 2025 Zayus Baroon <zay@zayusbaroon@blog>
+
+   # This program is free software: you can redistribute it and/or modify
+    #it under the terms of the GNU General Public License as published by
+    #the Free Software Foundation, either version 3 of the License, or
+    #(at your option) any later version.
+
+    #This program is distributed in the hope that it will be useful,
+    #but WITHOUT ANY WARRANTY; without even the implied warranty of
+    #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    #GNU General Public License for more details.
+
+    #You should have received a copy of the GNU General Public License
+    #along with this program.  If not, see <https://www.gnu.org/licenses/>
+
 import os
 import tarfile
 import tomllib
@@ -12,13 +27,13 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
 class Packer:
-    def __init__(self, config_path, watchee, pwd):
+    def __init__(self, config_path, watchee, pwd, salt):
 
         with open(config_path, 'rb') as t:
             config = tomllib.load(t)
         self.bufsize = config['storage']['buffer_size']
 
-        self.watchee = watchee
+        self.watchee = os.path.abspath(watchee)
         self.watchee_name = os.path.basename(self.watchee.strip('/'))
 
         self.package_dir = config['packer']['package_directory']
@@ -28,8 +43,6 @@ class Packer:
         self.recv_dir = config['packer']['pigeon_download_directory']
 
 
-
-        salt = os.urandom(16)
         times = config['hash_iterations']
         self.kdf = PBKDF2HMAC(algorithm=hashes.BLAKE2s(32), length=32, salt=salt, iterations=times)
 
@@ -82,13 +95,14 @@ class Packer:
         src = self.outfile
         dest = self.outfile + '.tar.gz'
 
-        with open(src, 'rb+') as f:
-            f.seek(-32, 2)
-            iv = f.read(16)
-            tag = f.read(16)
-            f.seek(-32, 2)
-            f.truncate()
-            f.seek(0)
+        f = open(src, 'rb+')
+        f.seek(-32, 2)
+        iv = f.read(16)
+        tag = f.read(16)
+        f.seek(-32, 2)
+        f.truncate()
+        f.close()
+        with open(src, 'rb') as f:
             decryptor = Cipher(algorithms.AES(self.key), modes.GCM(iv, tag)).decryptor()
             g = open(dest, 'wb')
             while True:

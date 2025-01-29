@@ -19,17 +19,17 @@ class TestCore(unittest.TestCase):
 
         if os.path.exists(cls.trg):
             shutil.rmtree(cls.trg)
-        shutil.copytree(src=prev, dst=cls.trg, ignore=shutil.ignore_patterns('tests'))
+        shutil.copytree(src=prev, dst=cls.trg, ignore=shutil.ignore_patterns('tests', '.git'))
 
-        cls.packer = Packer(config_file, cls.trg, b'terrible_password')
+        cls.packer = Packer(config_file, cls.trg, b'terrible_password', os.urandom(16))
         cls.watcher = Watcher(config_file, cls.trg)
 
         #make _test_watchee()
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.trg)
-        if os.path.isdir('packer/'):
-            shutil.rmtree('packer/')
+        if os.path.isdir('packaging/'):
+            shutil.rmtree('packaging/')
 
     def test_watching(self):
         change = os.path.join(self.trg, 'blabla.txt')

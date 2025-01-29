@@ -1,5 +1,6 @@
 
 user_password = ""
+salt = ""
 hash_iterations = 3000
 [storage]
 use_database = false

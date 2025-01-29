@@ -1,3 +1,18 @@
+ # Copyright © 2025 Zayus Baroon <zay@zayusbaroon@blog>
+
+   # This program is free software: you can redistribute it and/or modify
+    #it under the terms of the GNU General Public License as published by
+    #the Free Software Foundation, either version 3 of the License, or
+    #(at your option) any later version.
+
+    #This program is distributed in the hope that it will be useful,
+    #but WITHOUT ANY WARRANTY; without even the implied warranty of
+    #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    #GNU General Public License for more details.
+
+    #You should have received a copy of the GNU General Public License
+    #along with this program.  If not, see <https://www.gnu.org/licenses/>
+
 #!/usr/bin/env python3
 
 import sys
@@ -5,6 +20,7 @@ import os
 from datetime import datetime
 import time
 from multiprocessing import Process
+import base64
 
 import tomllib
 import getpass
@@ -80,7 +96,7 @@ def main():
         sys.exit()
 
     elif (sys.argv[1] == '-h' or sys.argv[1] == '--help') and len(sys.argv) == 2:
-        print('''A modular backup utility, v1.0\n\nUsage: python3 mbu.py [options] <target-directory>|| -h, --help\nOptions:
+        print('''A modular backup utility, v1.0\n\nUsage: [python3] mbu.py [options] <target-directory>|| -h, --help\nOptions:
         -o, --package   : Compress <target-directory>, encrypt the compressed archive, and store result.\n
         -w, --watch     : Continuously watch <target-directory> for changes, compressing and encrypting it if any are detected.\n
         -d              : Decrypts and decompresses previously stored backup of <target-directory>. Can also be executed at the watch loop prompt.\n
@@ -102,7 +118,7 @@ def main():
 
     h.update(pwd.encode())
     digest = h.hexdigest()
-    if settings['user_password'] == '':
+    if settings['user_password'] == "":
         cfr = getpass.getpass('Not found; creating new password. Please confirm the selected password: ')
         if pwd != cfr:
             print('Password mismatch. Exiting')
@@ -116,12 +132,19 @@ def main():
         sys.exit()
     print('Password OK')
 
+    if settings['salt'] == "":
+        old = r'salt = ""'
+        s = os.urandom(16)
+        new = f'salt = "{base64.b64encode(s).decode()}"'
+        edit_toml(config, old, new)
+    else:
+        s = base64.b64decode(settings['salt'])
     if options['-o'] != None and os.path.exists(options['-o']):
-            packer = Packer(config, options['-o'], pwd.encode())
+            packer = Packer(config, options['-o'], pwd.encode(), s)
             print(f'Packaging {packer.watchee} as {packer.outfile}')
             packer.make_package()
     elif options['-w'] != None and os.path.isdir(options['-w']):
-        packer = Packer(config, options['-w'], pwd.encode())
+        packer = Packer(config, options['-w'], pwd.encode(), s)
         watcher = Watcher(config, options['-w'])
         print(f'Watching {watcher.watchee} for changes...\n')
         loop = Process(target=monitor, args=[watcher, packer])
@@ -134,7 +157,7 @@ def main():
                 print('Invalid command')
 
     elif options['-d'] != None and os.path.exists(options['-d']):
-        packer = Packer(config, options['-d'], pwd.encode())
+        packer = Packer(config, options['-d'], pwd.encode(), s)
         print(f'Unpacking {packer.outfile} to {packer.restore_dir}')
         packer.depackage()
     else:
