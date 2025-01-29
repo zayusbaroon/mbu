@@ -1,0 +1,22 @@
+
+user_password = ""
+hash_iterations = 3000
+[storage]
+use_database = false
+database_init_script = """DROP TABLE IF EXISTS file_data; DROP TABLE IF EXISTS dirs; CREATE TABLE files (name TEXT, lm REAL, size INTEGER, id INTEGER PRIMARY KEY); CREATE TABLE dirs (name TEXT);"""
+buffer_size = 2048
+
+[packer]
+module = "default_packer"
+package_directory = "packaging/"
+restore_directory = "packaging/contents/"
+pigeon_upload_directory = "packaging/send/"
+pigeon_download_directory = "packaging/recv/"
+pigeon_file = "packaging/send/package"
+
+[watcher]
+module = "default_watcher"
+
+
+
+
