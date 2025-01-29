@@ -1,4 +1,4 @@
- # Copyright © 2025 Zayus Baroon <zay@zayusbaroon@blog>
+ # Copyright © 2025 Zayus Baroon <zay@zayusbaroon.blog>
 
    # This program is free software: you can redistribute it and/or modify
     #it under the terms of the GNU General Public License as published by
