@@ -29,7 +29,7 @@ You can tell mbu to continuously watch a directory for changes, and back it up a
 Note that currently, this just makes the program iteratively check the sizes and modification times of the target directory's contents against a previous record of them, calling Packer.make_package() if they differ. While it is a very simple algorithm that ought to work on or at least be adaptable to many operating systems, it is also fairly resource intensive. So unless you need to automate interfacing with a frontend, you might consider making manual backups with -o instead.
 
 ## Platforms and dependencies
-mbu was designed to be platform-agnostic, and its only dependency save for the Python standard library is [cryptography 44.0.0](https://pypi.org/project/cryptography/). That being said, it has only been tested with Python 3.11.2 on Linux, so there may exist some undetected bugs on other platforms.
+mbu was designed to be platform-agnostic, and its only dependency save for the Python standard library is [cryptography 44.0.0](https://pypi.org/project/cryptography/). However, it has only been tested with Python 3.11.2 on Linux, so there may exist some undetected bugs on other platforms.
 
 ## State of the project
 At present, this tool is functional but can be improved considerably. Though no promise of further development will be made, the following possible improvements are acknowledged:
