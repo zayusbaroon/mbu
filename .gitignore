@@ -1,0 +1,9 @@
+venv
+*.kate-swp
+todo.txt
+packaging
+*.swp
+dummy
+__pycache__
+pigeon
+hash_watcher.py
