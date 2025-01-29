@@ -34,11 +34,11 @@ mbu was designed to be platform-agnostic, and its only dependency save for the P
 ## State of the project
 At present, this tool is functional but can be improved considerably. Though no promise of further development will be made, the following possible improvements are acknowledged:
 
-*Better key security
-*Built-in frontend options (the "pigeon")
-*Confirm and/or ensure platform agnosticism
-*Replace watching algorithm with something less resource-hungry
-*Database stuff
+* Better key security
+* Built-in frontend options (the "pigeon")
+* Confirm and/or ensure platform agnosticism
+* Replace watching algorithm with something less resource-hungry
+* Database stuff
 
 That being said, the user is encouraged to report any bugs found.
 
